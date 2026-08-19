@@ -1,0 +1,6 @@
+# never commit your real environment file
+.env
+
+# appdata / data are runtime, not repo content
+/appdata/
+/data/

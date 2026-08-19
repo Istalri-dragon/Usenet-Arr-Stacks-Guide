@@ -1,0 +1,236 @@
+# =============================================================================
+#  The *arr Stack (Usenet edition) — docker-compose.yml
+# =============================================================================
+#  Companion file for the written guide. Copy .env.example -> .env and edit
+#  that FIRST, then run:  docker compose up -d
+#
+#  THE ONE RULE THAT MAKES THIS WORK:
+#  Every app that touches files (SABnzbd + Radarr/Sonarr/Bazarr) mounts the
+#  SAME single data root the SAME way: ${DATA}:/data. That is what lets Radarr
+#  and Sonarr HARDLINK an import instead of copying it — instant moves, no
+#  doubled disk. If you split it into /downloads and /movies you break this.
+#  See the README, section "The folder structure", for the layout and the why.
+#
+#  Everything in this file shares one Docker network automatically, so the apps
+#  reach each other by service name — e.g. Radarr talks to SABnzbd at
+#  http://sabnzbd:8080 and to Prowlarr at http://prowlarr:9696. No IPs needed.
+#
+#  This is the Usenet-only stack. There is no VPN and no torrent client here
+#  on purpose: Usenet is a direct, encrypted connection to your provider, so
+#  there's no swarm to hide from and nothing a VPN would add. If you ever want
+#  the torrent path, that's a separate add-on (gluetun + qBittorrent) covered
+#  elsewhere — it is intentionally not in this file.
+# =============================================================================
+
+services:
+
+  # ---------------------------------------------------------------------------
+  # DOWNLOAD CLIENT — SABnzbd (Usenet)
+  # You must bring your own: a PAID Usenet provider + at least one indexer.
+  # A guide can't hand you those — see the README, "Download client".
+  # Web UI: http://SERVER_IP:8080
+  # ---------------------------------------------------------------------------
+  sabnzbd:
+    image: lscr.io/linuxserver/sabnzbd:latest
+    container_name: sabnzbd
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${APPDATA}/sabnzbd:/config
+      - ${DATA}:/data            # <-- the shared root. left of the colon = the
+                                 #     real machine, right = the path inside the
+                                 #     container. This one line is why hardlinks
+                                 #     work. Do not split it into sub-paths.
+    ports:
+      - 8080:8080
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------------------
+  # INDEXER MANAGER — Prowlarr
+  # One place to add indexers; it pushes them to Radarr + Sonarr for you.
+  # If you truly only have one or two indexers you can skip this and add them
+  # straight into Radarr/Sonarr — but it's easier to set up now than bolt on
+  # later. Web UI: http://SERVER_IP:9696
+  # ---------------------------------------------------------------------------
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${APPDATA}/prowlarr:/config
+    ports:
+      - 9696:9696
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------------------
+  # FlareSolverr — lets Prowlarr get past Cloudflare "are you human" challenges
+  # on some public indexers. In Prowlarr, add it as a proxy at
+  # http://flaresolverr:8191  (see the README, section 7 "Prowlarr").
+  # Optional: most Usenet indexers don't need it — you can delete this service.
+  # ---------------------------------------------------------------------------
+  flaresolverr:
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    container_name: flaresolverr
+    environment:
+      - LOG_LEVEL=info
+      - TZ=${TZ}
+    ports:
+      - 8191:8191
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------------------
+  # MOVIES — Radarr.  Web UI: http://SERVER_IP:7878
+  # Root folder to set INSIDE Radarr later:  /data/media/movies
+  # Download client to add INSIDE Radarr:    host sabnzbd, port 8080
+  # ---------------------------------------------------------------------------
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${APPDATA}/radarr:/config
+      - ${DATA}:/data
+    ports:
+      - 7878:7878
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------------------
+  # TV — Sonarr.  Web UI: http://SERVER_IP:8989
+  # Root folder to set INSIDE Sonarr later:  /data/media/tv
+  # ---------------------------------------------------------------------------
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${APPDATA}/sonarr:/config
+      - ${DATA}:/data
+    ports:
+      - 8989:8989
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------------------
+  # SUBTITLES — Bazarr (optional).  Web UI: http://SERVER_IP:6767
+  # Mounts the same /data root as Radarr/Sonarr so it finds the media.
+  # ---------------------------------------------------------------------------
+  bazarr:
+    image: lscr.io/linuxserver/bazarr:latest
+    container_name: bazarr
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${APPDATA}/bazarr:/config
+      - ${DATA}:/data
+    ports:
+      - 6767:6767
+    restart: unless-stopped
+
+  # ===========================================================================
+  # MEDIA SERVER — pick ONE. Jellyfin is enabled; Plex is commented below.
+  # This is the only real fork in the whole stack. Everything above and the
+  # request layer below are identical either way.
+  # ===========================================================================
+
+  # --- Jellyfin: fully local, no account, hardware transcoding is FREE. ------
+  # Web UI: http://SERVER_IP:8096.  The /dev/dri line hands your Intel/AMD iGPU
+  # to Jellyfin for hardware transcoding — remove it if your box has no
+  # compatible GPU (an NVIDIA GPU is configured differently; see the README).
+  jellyfin:
+    image: lscr.io/linuxserver/jellyfin:latest
+    container_name: jellyfin
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${APPDATA}/jellyfin:/config
+      - ${DATA}/media:/data/media
+    ports:
+      - 8096:8096
+    devices:
+      - /dev/dri:/dev/dri        # hardware transcoding (Intel QuickSync / VAAPI)
+    restart: unless-stopped
+
+  # --- Plex: needs a plex.tv account + a claim token; hardware transcoding -----
+  #     requires a paid Plex Pass. To use Plex INSTEAD of Jellyfin: comment out
+  #     the jellyfin block above, uncomment this, and put a FRESH claim token
+  #     (from https://www.plex.tv/claim, valid ~4 min) in your .env as PLEX_CLAIM.
+  # plex:
+  #   image: lscr.io/linuxserver/plex:latest
+  #   container_name: plex
+  #   network_mode: host
+  #   environment:
+  #     - PUID=${PUID}
+  #     - PGID=${PGID}
+  #     - TZ=${TZ}
+  #     - VERSION=docker
+  #     - PLEX_CLAIM=${PLEX_CLAIM}
+  #   volumes:
+  #     - ${APPDATA}/plex:/config
+  #     - ${DATA}/media:/data/media
+  #   devices:
+  #     - /dev/dri:/dev/dri
+  #   restart: unless-stopped
+
+  # ---------------------------------------------------------------------------
+  # REQUESTS — Seerr (unified Plex/Jellyfin/Emby, one image).
+  # This is the project that Overseerr AND Jellyseerr merged into in early 2026.
+  # If a guide still tells you to choose between those two, it's out of date.
+  # NOTE: Seerr runs as its own internal user (UID 1000) and does NOT read
+  # PUID/PGID — that's why they're absent here. Point it at whichever media
+  # server you built. Web UI: http://SERVER_IP:5055
+  # ---------------------------------------------------------------------------
+  seerr:
+    image: ghcr.io/seerr-team/seerr:latest
+    container_name: seerr
+    init: true
+    environment:
+      - TZ=${TZ}
+    volumes:
+      - ${APPDATA}/seerr:/app/config
+    ports:
+      - 5055:5055
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------------------
+  # QUALITY PROFILES — the payoff. Choose ONE approach.
+  #
+  # Option A (modern GUI, recommended for new installs): Profilarr — a web UI
+  # that syncs TRaSH-style quality profiles & custom formats, no YAML editing.
+  # Web UI: http://SERVER_IP:6868  (then point it at Radarr/Sonarr and Sync)
+  profilarr:
+    image: ghcr.io/dictionarry-hub/profilarr:latest
+    container_name: profilarr
+    environment:
+      - TZ=${TZ}
+    volumes:
+      - ${APPDATA}/profilarr:/config
+    ports:
+      - 6868:6868
+    restart: unless-stopped
+
+  # Option B (classic CLI, lightest footprint): Recyclarr — reads a YAML file
+  # and pushes TRaSH profiles on a schedule. Uncomment and delete Profilarr if
+  # you prefer config-as-code. Put your recyclarr.yml in ${APPDATA}/recyclarr.
+  # recyclarr:
+  #   image: ghcr.io/recyclarr/recyclarr:latest
+  #   container_name: recyclarr
+  #   user: ${PUID}:${PGID}
+  #   environment:
+  #     - TZ=${TZ}
+  #   volumes:
+  #     - ${APPDATA}/recyclarr:/config
+  #   restart: unless-stopped
