@@ -45,7 +45,7 @@ legal (see [Folder structure](01-folder-structure.md)).
 - **NAS (Unraid / Synology / TrueNAS):** the paths and the hardlink caveats are
   different enough to have their own page — see [Running on a NAS](nas.md).
 
-## The one thing nobody tells beginners
+## How to find your Server IP.
 
 To open any of these apps, you type the **server's IP address and a port number**
 into a browser. That's it. If your server's IP is `192.168.1.50`, then Radarr is
