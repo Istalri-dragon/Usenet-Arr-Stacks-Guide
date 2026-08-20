@@ -1,5 +1,7 @@
 # Troubleshooting — the failure states, and what they actually say
 
+[← Home](../README.md)
+
 Most guides only show the happy path. This page is the opposite: it shows what
 things look like when they're **broken**, so when your screen looks wrong you can
 tell whether it's normal or a real problem — and fix it fast.
@@ -192,7 +194,7 @@ test fails.
 
 1. **Do you have an indexer at all?** Prowlarr → `Indexers`. Usenet needs a
    working indexer *and* a paid provider in SAB — a guide can't supply these
-   (see the README, section 6).
+   (see [SABnzbd](04-sabnzbd.md)).
 2. **Did Prowlarr sync to the apps?** Prowlarr → `Settings → Apps` should list
    Radarr and Sonarr, and Radarr → `Settings → Indexers` should show the synced
    indexers. If not, re-check the App entries (URLs `http://radarr:7878` /
@@ -200,8 +202,8 @@ test fails.
 3. **Indexer credentials.** Test each indexer in Prowlarr; a red result usually
    means a wrong API key or an expired account.
 4. **Cloudflare-gated indexer?** If a public indexer errors with a Cloudflare
-   "are you human" challenge, route it through FlareSolverr — see the FlareSolverr
-   note in the [README, section 7](../README.md#7-prowlarr--indexers-in-one-place).
+   "are you human" challenge, route it through FlareSolverr — see the
+   [FlareSolverr note on the Prowlarr page](05-prowlarr.md#flaresolverr-optional).
    (Most Usenet indexers don't need it.)
 
 ---

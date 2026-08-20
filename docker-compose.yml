@@ -9,7 +9,7 @@
 #  SAME single data root the SAME way: ${DATA}:/data. That is what lets Radarr
 #  and Sonarr HARDLINK an import instead of copying it — instant moves, no
 #  doubled disk. If you split it into /downloads and /movies you break this.
-#  See the README, section "The folder structure", for the layout and the why.
+#  See docs/01-folder-structure.md for the layout and the why.
 #
 #  Everything in this file shares one Docker network automatically, so the apps
 #  reach each other by service name — e.g. Radarr talks to SABnzbd at
@@ -27,7 +27,7 @@ services:
   # ---------------------------------------------------------------------------
   # DOWNLOAD CLIENT — SABnzbd (Usenet)
   # You must bring your own: a PAID Usenet provider + at least one indexer.
-  # A guide can't hand you those — see the README, "Download client".
+  # A guide can't hand you those — see docs/04-sabnzbd.md.
   # Web UI: http://SERVER_IP:8080
   # ---------------------------------------------------------------------------
   sabnzbd:
@@ -70,7 +70,7 @@ services:
   # ---------------------------------------------------------------------------
   # FlareSolverr — lets Prowlarr get past Cloudflare "are you human" challenges
   # on some public indexers. In Prowlarr, add it as a proxy at
-  # http://flaresolverr:8191  (see the README, section 7 "Prowlarr").
+  # http://flaresolverr:8191  (see docs/05-prowlarr.md).
   # Optional: most Usenet indexers don't need it — you can delete this service.
   # ---------------------------------------------------------------------------
   flaresolverr:

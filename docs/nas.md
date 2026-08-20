@@ -1,5 +1,7 @@
 # Running this stack on a NAS — Unraid, Synology, TrueNAS SCALE
 
+[← Home](../README.md)
+
 Everything in the main [README](../README.md) was written on a plain Linux host
 on purpose — that's what keeps the guide honest. But most people run this on a
 NAS, so here's how to translate the **exact same stack**.
