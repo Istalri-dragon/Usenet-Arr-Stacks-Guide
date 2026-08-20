@@ -20,7 +20,7 @@ down.
 > Docker networks, so service names stop resolving across them and Seerr can no
 > longer reach Radarr/Sonarr by name. Making it work means creating one shared
 > external network (`docker network create arr`) and attaching both files' services
-> to it. This repo ships a single combined file precisely because it sidesteps all
+> to it. This repo ships a single combined file because it sidesteps all
 > of that — which is why it's the path I'd point a first-timer to.
 
 ```bash
