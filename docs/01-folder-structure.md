@@ -59,7 +59,7 @@ move. A broken one shows a progress bar and the free space dropping. There's a
 side-by-side of exactly this in [Troubleshooting](troubleshooting.md#hardlinks-silently-became-copies).
 
 This layout follows the [TRaSH Guides](https://trash-guides.info/) recommendation —
-the reference the whole community trusts, so you're not inventing anything.
+the reference the whole community trusts.
 Technically the root folder can be called anything, but `data` (with `media`
 under it) is the recommended convention.
 
