@@ -35,17 +35,16 @@ difference between "it works" and a day lost to a mystery.
 
 ## Detail 1 — PUID / PGID (don't hardcode 1000)
 
-Every guide writes `PUID=1000` like it's a law of physics. It's not — it's *your*
-user's ID, and it might not be 1000 (but it probably is...). Find yours instead
-of guessing:
+Every guide writes `PUID=1000` like it's the only possible option. Your ID may 
+not might not be 1000 (but it probably is...). Find yours insteadof guessing:
 
 ```bash
 id
 # uid=1000(you) gid=1000(you) groups=1000(you),...
 ```
 
-Use whatever `id` prints. On a normal Linux box or VM it's usually `1000`. On
-**Unraid** it's `99` / `100`. On **Synology** it's something else entirely — you
+Use whatever `id` prints for your user. On a normal Linux box or VM it's usually `1000`. 
+On **Unraid** it's `99` / `100`. On **Synology** it's something else entirely — you
 have to check. This is what lets the apps write files your user can actually
 read; get it wrong and you get permission errors (there's a worked example of
 exactly that error in [Troubleshooting](troubleshooting.md#permission-denied--files-owned-by-the-wrong-user)).
@@ -61,7 +60,7 @@ PGID=1000
 > its own internal user (UID 1000) and ignores those variables. That's not an
 > omission; it's how the Seerr image is built. Every other app uses them.
 
-## Detail 2 — the volume-mapping colon (the line that makes hardlinks work)
+## Detail 2 —  volume-mapping (the line that makes hardlinks work)
 
 Look at this line under `sabnzbd`:
 
