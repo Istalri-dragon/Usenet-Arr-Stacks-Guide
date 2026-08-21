@@ -4,6 +4,12 @@
 
 **Web UI:** `http://SERVER_IP:6767`
 
+Find your `SERVER_IP`:
+
+```bash
+hostname -I | awk '{print $1}'
+```
+
 ---
 
 Optional, but most people want it. Bazarr watches your library and fetches

@@ -4,13 +4,19 @@
 
 **Web UI:** `http://SERVER_IP:5055`
 
+Find your `SERVER_IP`:
+
+```bash
+hostname -I | awk '{print $1}'
+```
+
 ---
 
 Seerr is the nice front door: users search for something, click **Request**, and
 it flows into Radarr or Sonarr automatically. It's what turns "SSH in and add a
 movie in Radarr" into "click a poster."
 
-## A currency beat worth saying out loud
+## Overseerr and Jellyseerr are now Seerr
 
 If you're following older guides you'll see them tell you to choose between
 **Overseerr** and **Jellyseerr**. **That choice no longer exists.** In early 2026
@@ -39,7 +45,7 @@ On first load, Seerr walks you through:
      [quality profiles](10-quality-profiles.md) you'll have good ones)
 4. **Connect Sonarr** the same way (`http://sonarr:8989`, root `/data/media/tv`).
 
-## Close the loop
+## Test the whole flow
 
 Do one real request end-to-end so you *see* the whole system work: request in
 Seerr → Radarr grabs it → SABnzbd downloads → hardlink import into

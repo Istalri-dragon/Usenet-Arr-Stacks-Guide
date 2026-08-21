@@ -109,39 +109,46 @@ filesystems.
 
 ## Permission denied / files owned by the wrong user
 
-**Symptom:** Radarr/Sonarr log something like:
+**Symptom:** an app can't write where it needs to. The real errors people hit on
+first run:
 
+- **SABnzbd** → `Settings → Folders`, red bar:
+  `Failed — download_dir directory: /data/usenet/incomplete error accessing`
+- **Seerr** crash-loops; `docker compose logs seerr` shows
+  `Error: EACCES: permission denied, mkdir '/app/config/logs/'`
+- **Radarr / Sonarr** log `Import failed ... Access to the path '/data/media/movies/<file>' is denied.`
+- …or files land in your library **owned by the wrong user** and the media server can't read them.
+
+**Why:** the host folders are owned by **root** — Docker creates any missing
+folder as root, and `/data` is often made with `sudo mkdir` — but the apps run as
+**you** (`PUID`/`PGID`), so they can't write into them. The LinuxServer apps
+(Radarr, Sonarr, SABnzbd…) fix their own `/config` on startup, but nobody fixes
+the shared `/data` mount for you, and the non-LinuxServer apps (**Seerr**,
+**Profilarr**) don't fix their config folder either — so those are where it bites.
+
+**Fix — make yourself the owner (one time):**
+
+```bash
+cd ~/arr-stack           # wherever your docker-compose.yml lives
+source .env              # loads DATA and APPDATA from your .env
+sudo chown -R "$(id -u):$(id -g)" "$DATA" "$APPDATA"
+docker compose restart
 ```
-Import failed ... Access to the path '/data/media/movies/<file>' is denied.
+
+To check the numbers first, or if it still fails:
+
+```bash
+id                       # your user's uid/gid
+ls -ln "$DATA"           # numeric owner of the data root (0 0 = root = the problem)
+docker exec sabnzbd id   # what a container actually runs as
 ```
 
-or files land in your library **owned by the wrong user** and the media server
-can't read them.
+If `ls -ln` shows `0 0` and your `id` is `1000`, the chown above is the whole fix.
 
-**Why:** `PUID`/`PGID` don't match the user that owns `/data`. The apps write
-files as `PUID:PGID`; if that isn't the owner of your data folders, writes fail.
-
-**Fix:**
-
-1. On the host, find the real IDs:
-   ```bash
-   id                       # your user
-   ls -ln /data             # who owns the data root (numeric)
-   ```
-2. Set `PUID`/`PGID` in `.env` to match the **owner of `/data`** (on Unraid
-   that's `99`/`100`; on Synology/TrueNAS, whatever `id` reported).
-3. Recreate the apps so they pick up the change:
-   ```bash
-   docker compose up -d
-   ```
-4. Fix ownership of anything already written with the wrong IDs:
-   ```bash
-   sudo chown -R 1000:1000 /data      # substitute YOUR PUID:PGID
-   ```
-
-**Reminder:** **Seerr** doesn't use PUID/PGID at all (it runs as its own internal
-UID 1000) — so a Seerr permission issue is about the host folder `${APPDATA}/seerr`
-ownership, not these variables.
+**Seerr (and Profilarr) are the exception:** Seerr always runs as its own internal
+**UID 1000**, whatever `PUID` you set — so its folder must be owned by `1000`
+specifically. If your user isn't 1000, run `sudo chown -R 1000:1000 "$APPDATA/seerr"`
+(and the same for `profilarr` if it complains).
 
 ---
 
@@ -201,10 +208,6 @@ test fails.
    `http://sonarr:8989` + API keys).
 3. **Indexer credentials.** Test each indexer in Prowlarr; a red result usually
    means a wrong API key or an expired account.
-4. **Cloudflare-gated indexer?** If a public indexer errors with a Cloudflare
-   "are you human" challenge, route it through FlareSolverr — see the
-   [FlareSolverr note on the Prowlarr page](05-prowlarr.md#flaresolverr-optional).
-   (Most Usenet indexers don't need it.)
 
 ---
 

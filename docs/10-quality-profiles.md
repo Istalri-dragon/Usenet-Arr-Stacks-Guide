@@ -1,4 +1,4 @@
-# 10 · Quality profiles — the payoff *(optional but recommended)*
+# 10 · Quality profiles *(optional but recommended)*
 
 **[← Prev: Bazarr](09-bazarr.md)** · [Home](../README.md)
 
@@ -22,6 +22,12 @@ You don't hand-copy it — you use a tool to **sync** it. Two options; pick one.
 ## Option A — Profilarr (modern GUI, recommended for new installs)
 
 **Web UI:** `http://SERVER_IP:6868`
+
+Find your `SERVER_IP`:
+
+```bash
+hostname -I | awk '{print $1}'
+```
 
 A web UI that syncs TRaSH-style quality profiles and custom formats into Radarr/
 Sonarr — **no YAML**. It's already running from the compose
@@ -56,7 +62,7 @@ works and one that gets you exactly what you want.
 
 ---
 
-## That's the whole stack 🎉
+## You're done
 
 Recap: request in **Seerr** → **Radarr / Sonarr** → **SABnzbd** → **hardlinked**
 into your library → playing in **Jellyfin / Plex**, with **Bazarr** subtitles and

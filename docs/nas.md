@@ -24,7 +24,7 @@ Two ways to run it.
 ### Option 1 — Community Applications (GUI, one app at a time)
 
 Search each app (SABnzbd, Radarr, Sonarr, Prowlarr, Bazarr, Jellyfin, Seerr,
-Profilarr, FlareSolverr) in **Apps** (Community Applications) and install from
+Profilarr) in **Apps** (Community Applications) and install from
 a template (there are several — different community members maintain them).
 I recommend **hotio**'s: they're already set up for the folder structure we use.
 With LinuxServer or others you may need to change the template's paths from the

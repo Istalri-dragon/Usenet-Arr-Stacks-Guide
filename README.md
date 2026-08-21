@@ -27,7 +27,7 @@ setup without hitting one of the walls I see people hit all the time.
 
 ---
 
-## The map — what you're building
+## How it fits together
 
 ```
                          ┌─────────────┐
@@ -82,7 +82,7 @@ Neither comes with the stack; both are covered on the [SABnzbd page](docs/04-sab
 
 ---
 
-## Setup — follow in order
+## Setup
 
 New to this? Do the pages top to bottom. Each one is short and links to the next.
 
@@ -92,7 +92,7 @@ New to this? Do the pages top to bottom. Each one is short and links to the next
 | 2 | [Prerequisites](docs/02-prerequisites.md) | Install Docker, sort out storage, how to open an app in a browser. |
 | 3 | [Docker Compose base](docs/03-docker-compose.md) | The `.env`, the three details everyone skips, bringing it all up. |
 | 4 | [SABnzbd](docs/04-sabnzbd.md) | The Usenet download client — and the provider + indexer you supply. |
-| 5 | [Prowlarr](docs/05-prowlarr.md) | Indexer manager (+ FlareSolverr). *Optional if you only have 1–2 indexers.* |
+| 5 | [Prowlarr](docs/05-prowlarr.md) | Indexer manager. *Optional if you only have 1–2 indexers.* |
 | 6 | [Radarr + Sonarr](docs/06-radarr-sonarr.md) | The brains — and the handshake that causes "not importing." |
 | 7 | [Media server](docs/07-media-server.md) | Jellyfin vs Plex, both finished. |
 | 8 | [Seerr](docs/08-seerr.md) | The request front-end. |
@@ -118,7 +118,6 @@ Open each in a browser at `http://SERVER_IP:PORT`.
 |--------------|-------|--------------------------------------------|
 | SABnzbd      | 8080  | Usenet download client                     |
 | Prowlarr     | 9696  | Indexer manager                            |
-| FlareSolverr | 8191  | Cloudflare solver (used by Prowlarr)       |
 | Radarr       | 7878  | Movies                                     |
 | Sonarr       | 8989  | TV                                         |
 | Bazarr       | 6767  | Subtitles                                  |
@@ -127,8 +126,8 @@ Open each in a browser at `http://SERVER_IP:PORT`.
 | Seerr        | 5055  | Requests                                   |
 | Profilarr    | 6868  | Quality profiles (default)                 |
 
-**Internal host names** (app-to-app, no IP): `sabnzbd`, `prowlarr`,
-`flaresolverr`, `radarr`, `sonarr`, `bazarr`, `jellyfin`, `seerr`, `profilarr`.
+**Internal host names** (app-to-app, no IP): `sabnzbd`, `prowlarr`, `radarr`,
+`sonarr`, `bazarr`, `jellyfin`, `seerr`, `profilarr`.
 
 ---
 

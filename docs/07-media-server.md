@@ -1,4 +1,4 @@
-# 7 · Media server — Jellyfin vs Plex (both finished)
+# 7 · Media server — Jellyfin or Plex
 
 **[← Prev: Radarr + Sonarr](06-radarr-sonarr.md)** · [Home](../README.md) · **Next: [Seerr →](08-seerr.md)**
 
@@ -29,6 +29,12 @@ leave notes so you, or someone looking at it six months later, know what it does
 ## Option A — Jellyfin
 
 **Web UI:** `http://SERVER_IP:8096`
+
+Find your `SERVER_IP`:
+
+```bash
+hostname -I | awk '{print $1}'
+```
 
 Jellyfin is **fully local**: no account, no signing in to anyone's servers, and —
 importantly — **hardware transcoding is free**.
@@ -77,6 +83,29 @@ Once you've swapped the blocks (above), finish Plex:
 
 > Plex uses `network_mode: host` (it needs a spread of ports for discovery and
 > streaming), which is why its port isn't in the `ports:` list like the others.
+
+
+## Accessing it from outside your network
+
+Everything above is **local-only**, which is the safe default. Reaching your media
+server from outside the house is a bigger topic — its own guide — but here's the
+short version per platform:
+
+- **Plex** authenticates through plex.tv, so you turn on **Settings → Remote
+  Access** (it forwards its port, `32400`, via UPnP or a manual port-forward).
+  One 2025 change to know: **remote playback of your own media now requires a paid
+  subscription** — a **Plex Pass** on the server account covers everyone who uses
+  it, or each user can have a **Plex Pass / Remote Watch Pass**. Port-forwarding
+  alone no longer gets you free remote streaming.
+- **Jellyfin** has no relay service, so remote access is more hands-on: a
+  **reverse proxy** (with HTTPS) plus **Dynamic DNS** to follow your changing
+  public IP. More work, but free.
+
+Whichever you use, only ever expose the **media server** — **never port-forward
+SABnzbd, Radarr, Sonarr, Prowlarr, or the rest.** They have weak or no
+authentication, and putting them on the open internet is a genuine security hole.
+(The safe way to reach those remotely is a reverse proxy with authentication — a
+topic for that separate guide.)
 
 ## Reconverge
 

@@ -1,4 +1,4 @@
-# 1 · The folder structure (read this before anything else)
+# 1 · Folder structure
 
 [← Home](../README.md) · **Next: [Prerequisites →](02-prerequisites.md)**
 
@@ -25,7 +25,7 @@ uses the same path and prevents a ton of issues down the line:
     └── tv/
 ```
 
-## Why one root? (this is the whole point)
+## Why one root?
 
 When Radarr or Sonarr finishes a download, it moves the file from `usenet/` into
 `media/`. You want that move to be a **hardlink**, not a copy.

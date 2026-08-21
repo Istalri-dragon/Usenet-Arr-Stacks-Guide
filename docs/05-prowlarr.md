@@ -4,9 +4,15 @@
 
 **Web UI:** `http://SERVER_IP:9696`
 
+Find your `SERVER_IP`:
+
+```bash
+hostname -I | awk '{print $1}'
+```
+
 ---
 
-## What problem Prowlarr solves (so it's not just a box we check)
+## What Prowlarr does
 
 You *could* add each indexer directly inside Radarr, and again inside Sonarr.
 That works. But you'd be doing it twice per indexer, and again every time you add
@@ -27,15 +33,6 @@ it pushes them out to Radarr and Sonarr automatically.
 `Indexers → Add Indexer`, search for each indexer you have access to, and enter
 your credentials / API key from that indexer's site. Test each one — green means
 Prowlarr can reach it.
-
-## FlareSolverr (optional)
-
-The compose file also starts FlareSolverr (port 8191), a small helper that gets
-Prowlarr past Cloudflare "are you human" challenges on some public indexers. Add
-it in Prowlarr under `Settings → Indexers → Add Proxy → FlareSolverr` with host
-`http://flaresolverr:8191`, then tag any indexer that needs it. Most Usenet
-indexers (NZBGeek included) don't, so this is optional — if you don't want it, you
-can delete the `flaresolverr` service from the compose file.
 
 ## Connect Prowlarr to Radarr and Sonarr
 

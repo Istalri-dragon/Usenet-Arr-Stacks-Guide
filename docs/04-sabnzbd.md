@@ -1,8 +1,14 @@
-# 4 · SABnzbd — the download client (and what you must bring yourself)
+# 4 · SABnzbd
 
 **[← Prev: Docker Compose base](03-docker-compose.md)** · [Home](../README.md) · **Next: [Prowlarr →](05-prowlarr.md)**
 
 **Web UI:** `http://SERVER_IP:8080`
+
+Find your `SERVER_IP`:
+
+```bash
+hostname -I | awk '{print $1}'
+```
 
 ---
 
@@ -55,7 +61,7 @@ rather than just *that* it did.
 - **Completed Download Folder**: `/data/usenet`
 
 Both are the **container** paths (inside the container your data root is `/data` —
-see [the compose page](03-docker-compose.md#detail-2--the-volume-mapping-colon-the-line-that-makes-hardlinks-work)).
+see [the compose page](03-docker-compose.md#the-volume-mapping)).
 Because completed downloads land under `/data/usenet` and your library is
 `/data/media`, both under the same mount, Radarr/Sonarr will be able to hardlink.
 If you point SAB's completed folder somewhere *outside* `/data`, hardlinks break —

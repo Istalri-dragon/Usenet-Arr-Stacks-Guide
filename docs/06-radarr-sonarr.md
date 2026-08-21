@@ -1,8 +1,14 @@
-# 6 · Radarr + Sonarr — the handshake that causes "not importing"
+# 6 · Radarr + Sonarr
 
 **[← Prev: Prowlarr](05-prowlarr.md)** · [Home](../README.md) · **Next: [Media server →](07-media-server.md)**
 
 **Radarr (movies):** `http://SERVER_IP:7878` · **Sonarr (TV):** `http://SERVER_IP:8989`
+
+Find your `SERVER_IP`:
+
+```bash
+hostname -I | awk '{print $1}'
+```
 
 ---
 
@@ -32,7 +38,7 @@ Click **Test** → green. Save. (Indexers should already be here if you set up
 This is where your organised library lives — the same `media/` folder Jellyfin/
 Plex will read.
 
-## The handshake (this is the part that matters)
+## Download folder vs. root folder
 
 Here's the thing that causes ~90% of *"it downloads but nothing shows up in my
 library."*
@@ -48,7 +54,7 @@ wrong, the import fails outright or silently turns into a slow copy. That sympto
 — "download completed, library empty" — is almost always this path relationship
 being broken.
 
-## See the failure on purpose
+## What "not importing" looks like
 
 It's worth breaking this once so you can *recognise* it. In
 [Troubleshooting](troubleshooting.md#it-downloads-but-nothing-shows-up-not-importing)
